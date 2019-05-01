@@ -1,0 +1,9 @@
+# Python temporary files
+*.pyc
+*.pyo
+__pycache__
+
+# Notebook checkpoint
+.ipynb_checkpoints/
+
+/output/
