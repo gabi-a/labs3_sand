@@ -2,12 +2,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
+from util import multipage
 
 do_animation = False
 
-size_x = 25
-size_y = 25
-n_drops = 10000
+size_x = 10
+size_y = 10
+n_drops = 100000
 
 table = np.zeros((n_drops, size_x, size_y))
 avalanche_size = np.zeros(n_drops, dtype=int)
@@ -21,7 +22,7 @@ drop_points = np.random.randint(0, size_x, (n_drops,2))
 
 for t in range(1,n_drops):
 
-    # print(f"{t}/{n_drops}",end="\r")
+    print(f"{100*t/n_drops:.0f}%",end="\r")
 
     table[t,:,:] = table[t-1,:,:]
     table[t,drop_points[t,0],drop_points[t,1]] += 1
@@ -85,29 +86,37 @@ plt.title("Total sand on table")
 # plt.show()
 # quit()
 
-def fit_and_plot(data, cutoff=-1):
+def fit_and_plot(data, xlabel="", cutoff=-1):
     x = data[0]
     y = data[1]
 
+    cutoff = min(len(x)-1, cutoff)
+
     popt, pcov = curve_fit(lambda x,a,b: a*x+b, np.log(x[:cutoff]), np.log(y[:cutoff]))
+    # popt2, pcov2 = curve_fit(lambda x,a,b: a*x+b, np.log(x[cutoff:]), np.log(y[cutoff:]))
+    fig, ax = plt.subplots()
     plt.loglog(x, y, 'x')
     xfine = np.linspace(x[0],x[cutoff])
+    # xfine2 = np.linspace(x[cutoff],x[-1])
     plt.loglog(xfine, np.exp(popt[1])*np.power(xfine, popt[0]))
+    # plt.loglog(xfine2, np.exp(popt2[1])*np.power(xfine2, popt2[0]))
+    ax.text(0.4,0.9, "$y=%.2fx^{%.3f}$"%(np.exp(popt[1]), popt[0]),transform=ax.transAxes)
+    # ax.text(0.4,0.8, "$y=%.2fx^{%.3f}$"%(np.exp(popt2[1]), popt2[0]),transform=ax.transAxes)
+    ax.text(0.74,0.85, f"size x = {size_x}\nsize y = {size_y}\n#drops = {n_drops}",bbox={'facecolor': 'grey', 'alpha': 0.5, 'pad': 5},transform=ax.transAxes)
+    plt.ylabel("frequency")
+    plt.xlabel(xlabel)
 
-plt.figure()
-fit_and_plot(avalanche_size_freqs, cutoff=80)
+
+fit_and_plot(avalanche_size_freqs, "size", cutoff=min(size_x, size_y))
 plt.title("avalanche size")
 
-plt.figure()
-fit_and_plot(avalanche_area_freqs, cutoff=50)
+fit_and_plot(avalanche_area_freqs, "area", cutoff=min(size_x, size_y))
 plt.title("avalanche area")
 
-plt.figure()
-fit_and_plot(avalanche_time_freqs)
+fit_and_plot(avalanche_time_freqs, "time", cutoff=min(size_x, size_y))
 plt.title("avalanche time")
 
-plt.figure()
-fit_and_plot(avalanche_radius_freqs)
+fit_and_plot(avalanche_radius_freqs, "radius", cutoff=min(size_x, size_y))
 plt.title("avalanche radius")
 
 if do_animation:
@@ -120,4 +129,5 @@ if do_animation:
 
     anim = animation.ArtistAnimation(fig, ims, interval=100, blit=True)
 
-plt.show()
+multipage(f"{n_drops}_{size_x}x{size_y}.pdf")
+# plt.show()
