@@ -107,9 +107,9 @@ for i in range(N):
         std[i] = np.std(sandpile.total_sand[start:])
 
         np.save(dirname+"/size", size_cutoff)
-        np.save(dirna+"/time", time)
+        np.save(dirname+"/time", time_cutoff)
         np.save(dirname+"/r", radius_cutoff)
-        np.save(dirnam+"/area", area_cutoff)
-        np.save(di+"/std", std)
+        np.save(dirname+"/area", area_cutoff)
+        np.save(dirname+"/std", std)
     except Exception as e:
         print(e)
