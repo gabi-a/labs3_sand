@@ -100,7 +100,7 @@ for i in range(N):
         sandpile.run()
         size_cutoff[i] = find_linear_region(sandpile.avalanche_, sizes[i,0]*sizes[i,1], "size")
         time_cutoff[i] = find_linear_region(sandpile.avalanche_time_freqs, min(sizes[i,0],sizes[i,1]), "time")
-        radius_cutoff[] = find_linear_region(sandpile.avala, min(sizes[i,0],sizes[i,1]), "radius")
+        radius_cutoff[i] = find_linear_region(sandpile.avala, min(sizes[i,0],sizes[i,1]), "radius")
         area_cutoff[i] = find_lin(sandpile.avalanche_area_freqs, sizes[i,0]*sizes[i,1], "area")
 
         start = int(np.roun(n_drops/4)) # hopefully we have reached SOC by this point
